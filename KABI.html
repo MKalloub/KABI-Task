@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KABI Task - Prices</title>
+</head>
+<body>
+    <h1>Add Price List</h1>
+    <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate">
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate">
+        <label for="pricePerDay">Price per Day:</label>
+        <input type="number" id="pricePerDay">
+        <button onclick="addPrice()">Add Price</button>
+    </div>
+    <div id="pricesList">
+        <!-- To print the Prices list here -->
+    </div>
+
+    <h1>Calculate Area</h1>
+    <div>
+        <label for="searchStartDate">Start Date:</label>
+        <input type="date" id="searchStartDate">
+        <label for="searchEndDate">End Date:</label>
+        <input type="date" id="searchEndDate">
+        <button onclick="calculate()">Calculate</button>
+    </div>
+    <div id="totalPrice">
+        <!-- To print Total price here -->
+    </div>
+
+    <script>
+        var prices = [];
+
+        function addPrice() {
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+            var pricePerDay = parseFloat(document.getElementById("pricePerDay").value);
+
+            prices.push({ startDate: new Date(startDate), endDate: new Date(endDate), pricePerDay });
+
+            displayPrices();
+        }
+
+        function displayPrices() {
+            var pricesListDiv = document.getElementById("pricesList");
+            pricesListDiv.innerHTML = "";
+            prices.forEach(price => {
+                var p = document.createElement("p");
+                p.textContent = `Start Date: ${price.startDate.toLocaleDateString()}, End Date: ${price.endDate.toLocaleDateString()}, Price per Day: ${price.pricePerDay}`;
+                pricesListDiv.appendChild(p);
+            });
+        }
+		
+		function calculateTotalPrice(startDate, endDate, priceList) {
+			var totalPrice = 0;
+
+			// Iterate over each day in the period
+			for (var currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+				// Find the price for the current day
+				var pricePerDay = findpricePerDay(currentDate, priceList);
+
+				// Add the price to the total
+				totalPrice += pricePerDay;
+			}
+
+			return totalPrice;
+		}
+
+		// Function to find the price for a specific day
+		function findpricePerDay(date, priceList) {
+			var pricePerDay = 0;
+			for (var i = 0; i < priceList.length; i++) {
+				if (date >= priceList[i].startDate && date <= priceList[i].endDate) {
+					pricePerDay = priceList[i].pricePerDay;
+				}
+			}
+			console.log("pricePerDay:", pricePerDay);
+			return pricePerDay;
+		}
+
+
+        function calculate() {
+            var startDate = new Date(document.getElementById("searchStartDate").value);
+            var endDate = new Date(document.getElementById("searchEndDate").value);
+
+            var totalPrice = calculateTotalPrice(startDate, endDate, prices);
+            var totalPriceDiv = document.getElementById("totalPrice");
+            totalPriceDiv.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+        }
+
+    </script>
+</body>
+</html>
